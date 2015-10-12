@@ -27,6 +27,41 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 
+//I think I need this for location?
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
+/* Begin my broken location attempt
+    as detailed here: https://developer.android.com/training/location/retrieve-current.html
+
+Added Google Play SDK (including dependency in gradle and confirmed api libs)
+Added following code to OnCreate method:
+
+mGoogleApiClient = new GoogleApiClient.Builder(this)
+        .addConnectionCallbacks(this)
+        .addOnConnectionFailedListener(this)
+        .addApi(LocationServices.API)
+        .build();
+
+Got error resolving symbol mGoogleApiClient
+
+Also tried making main activity implement ConnectionCallbacks and OnConnectionFailedListener
+And then overrode this method:
+@Override
+public void onConnected(Bundle connectionHint) {
+    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+          mGoogleApiClient);
+}
+
+Moral of the story: Android is Silly
+ */
+
+
 public class MainActivity extends Activity {
     private TextureView mTextureView = null;
     private CameraDevice mCameraDevice = null;
@@ -149,6 +184,7 @@ public class MainActivity extends Activity {
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,7 +193,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         mTextureView = (TextureView) findViewById(R.id.textureView1);
         mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
+
     }
+
 
     @Override
     public void onPause(){
