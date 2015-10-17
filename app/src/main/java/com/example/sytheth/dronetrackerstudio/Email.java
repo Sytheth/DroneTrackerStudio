@@ -12,6 +12,9 @@ public class Email {
      * Please separate the two with a tab or another character
      *
      * Date and time will be encoded in the picture
+     *
+     * Please send the email to croninstephen347@gmail.com for the purposes
+     * of our testing.
      */
 
 }
