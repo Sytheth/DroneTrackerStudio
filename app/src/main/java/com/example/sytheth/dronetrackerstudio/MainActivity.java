@@ -91,10 +91,7 @@ public class MainActivity extends Activity implements LocationListener {
         }
     };
 
-    // Get the GPS Location
-    LocationManager locationMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    locationMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-    CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+
 
     // Save the location
     @Override
@@ -219,7 +216,11 @@ public class MainActivity extends Activity implements LocationListener {
     }
 
     public void takePhoto(View view){
+        // Get the GPS Location
+        LocationManager locationMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        locationMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
     }
 
 
