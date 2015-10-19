@@ -2,9 +2,15 @@ package com.example.sytheth.dronetrackerstudio;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.params.StreamConfigurationMap;
+
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+
 import android.os.Bundle;
 import android.view.View;
 import android.view.Surface;
@@ -27,47 +33,17 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 
-//I think I need this for location?
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-
-/* Begin my broken location attempt
-    as detailed here: https://developer.android.com/training/location/retrieve-current.html
-
-Added Google Play SDK (including dependency in gradle and confirmed api libs)
-Added following code to OnCreate method:
-
-mGoogleApiClient = new GoogleApiClient.Builder(this)
-        .addConnectionCallbacks(this)
-        .addOnConnectionFailedListener(this)
-        .addApi(LocationServices.API)
-        .build();
-
-Got error resolving symbol mGoogleApiClient
-
-Also tried making main activity implement ConnectionCallbacks and OnConnectionFailedListener
-And then overrode this method:
-@Override
-public void onConnected(Bundle connectionHint) {
-    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-          mGoogleApiClient);
-}
-
-Moral of the story: Android is Silly
- */
-
-
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements LocationListener {
     private TextureView mTextureView = null;
     private CameraDevice mCameraDevice = null;
     private CaptureRequest.Builder mPreviewBuilder = null;
     private CameraCaptureSession mPreviewSession = null;
-    private Size mPreviewSize = null;
+    private Size mPreviewSize;
+    public Location location;
+
+    {
+        mPreviewSize = null;
+    }
 
     // Create the Surface Texture Listener
     private TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
@@ -114,6 +90,37 @@ public class MainActivity extends Activity {
             }
         }
     };
+
+    // Get the GPS Location
+    LocationManager locationMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    locationMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+    CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+
+    // Save the location
+    @Override
+    public void onLocationChanged(Location loc) {
+        location = loc;
+    }
+
+    // Required (GPS)
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // TODO Auto-generated method stub
+    }
+
+    // Required (GPS)
+    @Override
+    public void onProviderEnabled(String provider) {
+        // TODO Auto-generated method stub
+    }
+
+    // Required (GPS)
+    @Override
+    public void onProviderDisabled(String provider) {
+        // TODO Auto-generated method stub
+    }
+
+
 
     private CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 
