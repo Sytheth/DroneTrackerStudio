@@ -1,26 +1,31 @@
-import java.util.*;
-import javax.activation.DataHandler;
-import java.io.FileWriter;
-import java.io.IOException;
-import javax.mail.*;
-import javax.mail.Flags.Flag;
-import javax.mail.search.FlagTerm;
+/*
 
-import org.apache.commons.lang3.StringUtils;
-import java.io.InputStream;
-import java.io.FileOutputStream;
-import java.io.BufferedWriter;
-import java.io.File;
+		import java.util.*;
+		import javax.activation.DataHandler;
+		import java.io.FileWriter;
+		import java.io.IOException;
+		import javax.mail.*;
+		import javax.mail.Flags.Flag;
+		import javax.mail.search.FlagTerm;
+
+//import org.apache.commons.lang3.StringUtils;
+		import java.io.InputStream;
+		import java.io.FileOutputStream;
+		import java.io.BufferedWriter;
+		import java.io.File;
 
 
+*/
 /**
+ * 7
  *
  * @author Stephen Cronin
- * Things to implement next:
- * 		-Writing to file
- * 		-Loading all unread messages & marking as unread - maybe send to a gmail folder
- * 		-Some sort of way to filter out random other emails
- */
+ *         Things to implement next:
+ *         -Writing to file
+ *         -Loading all unread messages & marking as unread - maybe send to a gmail folder
+ *         -Some sort of way to filter out random other emails
+ *//*
+
 public class EmailSniffer {
 	static double[] gps;
 
@@ -36,22 +41,22 @@ public class EmailSniffer {
 			inbox.open(Folder.READ_WRITE);
 
 			Message messages[] = inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));//Looks for all unread emails
-			for (int z = 0; z < messages.length; z++){ //Loop through all emails
+			for (int z = 0; z < messages.length; z++) { //Loop through all emails
 				Message msg = messages[z];
 				Address[] in = msg.getFrom();
 
 				//Check to see the message came from a relevant address
 				Boolean sender = false;
 				for (Address address : in) {
-					if(address.toString().contains("gdcerau@gmail.com") || address.toString().contains("devin@isovirtual.com")){
+					if (address.toString().contains("gdcerau@gmail.com") || address.toString().contains("devin@isovirtual.com")) {
 						System.out.println("FROM:" + address.toString());
 						sender = true;
 					}
 				}
 
-				if(sender){//Sent from a source we care about
+				if (sender) {//Sent from a source we care about
 					//Prepare database write
-					FileWriter fileWritter = new FileWriter("Database.txt",true);
+					FileWriter fileWritter = new FileWriter("Database.txt", true);
 					BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
 					String writeString = "";
 
@@ -72,25 +77,25 @@ public class EmailSniffer {
 					Multipart multipart = (Multipart) msg.getContent();
 					for (int i = 0; i < multipart.getCount(); i++) {
 						BodyPart bodyPart = multipart.getBodyPart(i);
-						if(!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()) &&
+						if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()) &&
 								!StringUtils.isNotBlank(bodyPart.getFileName())) {
 							continue; // dealing with attachments only
 						}
 						InputStream is = bodyPart.getInputStream();
 						File f = new File("E:/Documents/Workspace/SE 300 Database/" + bodyPart.getFileName());
-						try{
+						try {
 							//Pull GPS data from image
 							javaxt.io.Image image = new javaxt.io.Image(f);
 							double[] gps = image.getGPSCoordinate();
 							writeString = writeString + "N: " + gps[1] + "\t" + "W: " + gps[0] + "\t";
-						} catch(Exception e){//No coordinate data
+						} catch (Exception e) {//No coordinate data
 							writeString = writeString + "Coordinate data not available.\t";
 						}
 						//Write image file and save it
 						FileOutputStream fos = new FileOutputStream(f);
 						byte[] buf = new byte[4096];
 						int bytesRead;
-						while((bytesRead = is.read(buf))!=-1) {
+						while ((bytesRead = is.read(buf)) != -1) {
 							fos.write(buf, 0, bytesRead);
 						}
 						fos.close();
@@ -113,3 +118,5 @@ public class EmailSniffer {
 		}
 	}
 }
+*/
+
