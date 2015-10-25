@@ -32,6 +32,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -214,11 +215,33 @@ public class MainActivity extends Activity implements LocationListener {
 
 
     public void sendEmail(View view){
+
+        Email email = new Email("gdcerau@gmail.com","NinjaTurtleSwag");
+        String[] toArr = {"croninstephen347@gmail.com"};
+        email.setTo(toArr);
+        email.setFrom("DroneyTracker@Droney.com");
+        // Collect informaiton from GUI
         EditText editText = (EditText)findViewById(R.id.editText1);
-        //System.out.println("-----------------------------------------------");
-        //System.out.println(editText);
         String description = editText.getText().toString();
-        Toast.makeText(MainActivity.this,description,Toast.LENGTH_LONG).show();
+        // If location was found, add it to the subject line
+        if (location != null){
+
+            email.setSubject(description+" Lat: "+location.getLatitude()+", Long: "+location.getLongitude());
+    }
+        else{
+            email.setSubject(description+" Location Unavailable");
+        }
+
+
+
+
+
+        // Send the email
+        AsyncTaskRunner runner = new AsyncTaskRunner();
+        runner.execute(email);
+
+        // Reset camera *** to be added later
+        Toast.makeText(MainActivity.this, "Email Sent!",Toast.LENGTH_SHORT).show();
     }
 
 
