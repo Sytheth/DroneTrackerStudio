@@ -30,6 +30,8 @@ import android.os.HandlerThread;
 import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 
@@ -197,7 +199,6 @@ public class MainActivity extends Activity implements LocationListener {
         setContentView(R.layout.activity_main);
         mTextureView = (TextureView) findViewById(R.id.textureView1);
         mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
-
     }
 
 
@@ -211,9 +212,15 @@ public class MainActivity extends Activity implements LocationListener {
         }
     }
 
-    public void sendEmail(View view){
 
+    public void sendEmail(View view){
+        EditText editText = (EditText)view.findViewById(R.id.editText1);
+        System.out.println("-----------------------------------------------");
+        System.out.println(editText);
+        String desciption = editText.getText().toString();
     }
+
+
 
     public void takePhoto(View view){
         // Get the GPS Location
