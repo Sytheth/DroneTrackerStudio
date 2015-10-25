@@ -214,10 +214,11 @@ public class MainActivity extends Activity implements LocationListener {
 
 
     public void sendEmail(View view){
-        EditText editText = (EditText)view.findViewById(R.id.editText1);
-        System.out.println("-----------------------------------------------");
-        System.out.println(editText);
-        String desciption = editText.getText().toString();
+        EditText editText = (EditText)findViewById(R.id.editText1);
+        //System.out.println("-----------------------------------------------");
+        //System.out.println(editText);
+        String description = editText.getText().toString();
+        Toast.makeText(MainActivity.this,description,Toast.LENGTH_LONG).show();
     }
 
 
