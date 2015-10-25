@@ -48,7 +48,7 @@ public class EmailSniffer {
 				//Check to see the message came from a relevant address
 				Boolean sender = false;
 				for (Address address : in) {
-					if (address.toString().contains("gdcerau@gmail.com") || address.toString().contains("devin@isovirtual.com")) {
+					if (address.toString().contains("gdcerau@gmail.com") || address.toString().contains("devin@isovirtual.com") || address.toString().contains("DroneyTracker@Droney.com")) {
 						System.out.println("FROM:" + address.toString());
 						sender = true;
 					}
