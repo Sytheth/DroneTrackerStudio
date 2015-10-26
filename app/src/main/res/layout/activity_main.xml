@@ -19,7 +19,6 @@
         android:layout_marginTop="0pt"
         android:layout_above="@+id/editText1" />
 
-
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
@@ -46,6 +45,7 @@
         android:layout_alignStart="@+id/textureView1"
         android:layout_alignEnd="@+id/textureView1"
         android:layout_below="@+id/captureButton"
+        android:hint="Description"
         android:layout_marginTop="46dp"
         android:ems="10"
         android:inputType="textMultiLine" />
