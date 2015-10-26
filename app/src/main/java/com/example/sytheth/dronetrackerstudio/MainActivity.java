@@ -213,7 +213,6 @@ public class MainActivity extends Activity implements LocationListener {
         }
     }
 
-
     public void sendEmail(View view){
 
         Email email = new Email("gdcerau@gmail.com","NinjaTurtleSwag");
