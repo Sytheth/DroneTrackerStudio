@@ -244,7 +244,6 @@ public class MainActivity extends Activity implements LocationListener {
     }
 
 
-
     public void takePhoto(View view){
         // Get the GPS Location
         LocationManager locationMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
