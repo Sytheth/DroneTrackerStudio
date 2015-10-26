@@ -252,5 +252,4 @@ public class MainActivity extends Activity implements LocationListener {
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
     }
 
-
 }
