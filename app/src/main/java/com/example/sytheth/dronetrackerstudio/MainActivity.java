@@ -99,6 +99,7 @@ public class MainActivity extends Activity implements LocationListener {
                 mPreviewSize = map.getOutputSizes(SurfaceTexture.class)[0];
 
 
+
                 if (checkCallingOrSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
                     manager.openCamera(cameraId, mStateCallback, null);
 
