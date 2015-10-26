@@ -3,6 +3,8 @@ package com.example.sytheth.dronetrackerstudio;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import java.io.File;
+
 import javax.xml.transform.Result;
 
 /**
@@ -14,20 +16,25 @@ import javax.xml.transform.Result;
  *
  *
  */
-public class AsyncTaskRunner extends AsyncTask<Email, Void, Result>{
+public class AsyncTaskRunner extends AsyncTask<Object, Void, Result>{
     @Override
-    protected Result doInBackground(Email... params) {
-        Email email = params[0];
-        /*
+    protected Result doInBackground(Object... params) {
+        Email email = (Email)params[0];
+        File file = (File)params[1];
         try {
             email.addAttachment(file.getPath());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        */
+
         try {
-            email.send();
+            if(email.send()){
+                System.out.println("YES");
+            }
+            else{
+                System.out.println("No");
+            }
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

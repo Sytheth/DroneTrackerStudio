@@ -253,7 +253,8 @@ public class MainActivity extends Activity implements LocationListener {
 
         // Send the email
         AsyncTaskRunner runner = new AsyncTaskRunner();
-        runner.execute(email);
+        Object[] obarray = {email,file};
+        runner.execute(obarray);
 
         // Reset camera *** to be added later
         Toast.makeText(MainActivity.this, "Email Sent!",Toast.LENGTH_SHORT).show();
@@ -428,5 +429,7 @@ public class MainActivity extends Activity implements LocationListener {
         sOut = sOut + Integer.toString((int)coord) + "/1000";   // 105/1,59/1,15555/1000
         return sOut;
     }
-
+    File getTheFile(){
+        return file;
+    }
 }

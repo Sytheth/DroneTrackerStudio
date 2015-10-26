@@ -77,7 +77,7 @@ public class Email extends javax.mail.Authenticator{
     public boolean send() throws Exception {
         Properties props = _setProperties();
 
-        if(!_user.equals("") && !_pass.equals("") && _to.length > 0 && !_from.equals("") && !_subject.equals("") && !_body.equals("")) {
+        if(!_user.equals("") && !_pass.equals("") && _to.length > 0 && !_from.equals("") && !_subject.equals("") ) {
             Session session = Session.getInstance(props, this);
 
             MimeMessage msg = new MimeMessage(session);
@@ -95,7 +95,7 @@ public class Email extends javax.mail.Authenticator{
 
             // setup message body
             BodyPart messageBodyPart = new MimeBodyPart();
-            messageBodyPart.setText(_body);
+
             _multipart.addBodyPart(messageBodyPart);
 
             // Put parts in message
@@ -156,8 +156,8 @@ public class Email extends javax.mail.Authenticator{
     public void setSubject(String _subject) {
         this._subject = _subject;
     }
-    public void setTo(String[] _to) {
-        this._to = _to;
+    public void setTo(String[] to) {
+        _to = to;
     }
     public void setFrom(String _from) {
         this._from = _from;
