@@ -139,8 +139,6 @@ public class MainActivity extends Activity implements LocationListener {
         // TODO Auto-generated method stub
     }
 
-
-
     private CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 
         @Override
@@ -196,11 +194,10 @@ public class MainActivity extends Activity implements LocationListener {
 
             try {
                 mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, backgroundHandler);
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-
             }
-
+            catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -209,7 +206,6 @@ public class MainActivity extends Activity implements LocationListener {
             Toast.makeText(MainActivity.this, "Error02!",Toast.LENGTH_SHORT).show();
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,7 +216,6 @@ public class MainActivity extends Activity implements LocationListener {
         mTextureView = (TextureView) findViewById(R.id.textureView1);
         mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
     }
-
 
     @Override
     public void onPause(){
@@ -238,14 +233,15 @@ public class MainActivity extends Activity implements LocationListener {
         String[] toArr = {"croninstephen347@gmail.com"};
         email.setTo(toArr);
         email.setFrom("DroneyTracker@Droney.com");
+
         // Collect informaiton from GUI
         EditText editText = (EditText)findViewById(R.id.editText1);
         String description = editText.getText().toString();
+
         // If location was found, add it to the subject line
         if (location != null){
-
             email.setSubject(description+" Lat: "+location.getLatitude()+", Long: "+location.getLongitude());
-    }
+        }
         else{
             email.setSubject(description+" Location Unavailable");
         }
@@ -344,7 +340,7 @@ public class MainActivity extends Activity implements LocationListener {
                         output = new FileOutputStream(file);
                         // Crop the image
                         Bitmap bmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
-                        Bitmap cropped = Bitmap.createBitmap(bmap,0,0,bmap.getWidth(),bmap.getWidth());
+                        Bitmap cropped = Bitmap.createBitmap(bmap,0,0,bmap.getWidth(),bmap.getHeight());
                         cropped = Bitmap.createScaledBitmap(cropped, 480, 480, true);
                         cropped.compress(Bitmap.CompressFormat.JPEG, 85, output);
 
