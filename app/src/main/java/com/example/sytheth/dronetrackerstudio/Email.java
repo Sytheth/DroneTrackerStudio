@@ -1,5 +1,6 @@
 package com.example.sytheth.dronetrackerstudio;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import javax.activation.CommandMap;
@@ -114,7 +115,11 @@ public class Email extends javax.mail.Authenticator{
         BodyPart messageBodyPart = new MimeBodyPart();
         DataSource source = new FileDataSource(filename);
         messageBodyPart.setDataHandler(new DataHandler(source));
-        messageBodyPart.setFileName("Test.jpg");
+
+        Calendar c = Calendar.getInstance();
+        String dateTime = c.getTime().toString();
+        //System.out.println(dateTime);
+        messageBodyPart.setFileName(dateTime + ".jpg");
 
         _multipart.addBodyPart(messageBodyPart);
     }

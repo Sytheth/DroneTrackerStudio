@@ -40,6 +40,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import android.os.HandlerThread;
@@ -236,12 +237,16 @@ public class MainActivity extends Activity implements LocationListener {
         EditText editText = (EditText)findViewById(R.id.editText1);
         String description = editText.getText().toString();
 
+
+        Calendar c = Calendar.getInstance();
+        String dateTime = c.getTime().toString();
+        //System.out.println(dateTime);
         // If location was found, add it to the subject line
         if (location != null){
-            email.setSubject(description+" Lat: "+location.getLatitude()+", Long: "+location.getLongitude());
+            email.setSubject(description + "\t" + dateTime + "\t" +" Lat: "+location.getLatitude() + "\t" + "Long: "+location.getLongitude());
         }
         else{
-            email.setSubject(description+" Location Unavailable");
+            email.setSubject(description + "\t" + dateTime + "\t" +" Location Unavailable");
         }
         email.setBody("");
 
