@@ -95,7 +95,7 @@ public class Email extends javax.mail.Authenticator{
 
             // setup message body
             BodyPart messageBodyPart = new MimeBodyPart();
-
+            messageBodyPart.setText(_body);
             _multipart.addBodyPart(messageBodyPart);
 
             // Put parts in message
@@ -114,7 +114,7 @@ public class Email extends javax.mail.Authenticator{
         BodyPart messageBodyPart = new MimeBodyPart();
         DataSource source = new FileDataSource(filename);
         messageBodyPart.setDataHandler(new DataHandler(source));
-        messageBodyPart.setFileName(filename);
+        messageBodyPart.setFileName("Test.jpg");
 
         _multipart.addBodyPart(messageBodyPart);
     }

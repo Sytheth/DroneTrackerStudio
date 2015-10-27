@@ -57,15 +57,12 @@ public class MainActivity extends Activity implements LocationListener {
     private CameraDevice mCameraDevice = null;
     private CaptureRequest.Builder mPreviewBuilder = null;
     private CameraCaptureSession mPreviewSession = null;
-    private Size mPreviewSize;
+    private Size mPreviewSize = null;
     public Location location;
 
     // Storage location of image file
     final File file = new File(Environment.getExternalStorageDirectory()+"/DCIM/Camera", "IMG_Drone.jpg");
 
-    {
-        mPreviewSize = null;
-    }
 
     // Create the Surface Texture Listener
     private TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
@@ -246,7 +243,7 @@ public class MainActivity extends Activity implements LocationListener {
         else{
             email.setSubject(description+" Location Unavailable");
         }
-
+        email.setBody("");
 
 
 
