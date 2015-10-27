@@ -117,9 +117,13 @@ public class Email extends javax.mail.Authenticator{
         messageBodyPart.setDataHandler(new DataHandler(source));
 
         Calendar c = Calendar.getInstance();
-        String dateTime = c.getTime().toString();
+        String[] dateTime = c.getTime().toString().split(" ");
+        String name = "";
+        for(String s : dateTime){
+            name = name + s;
+        }
 
-        messageBodyPart.setFileName(dateTime + ".jpg");
+        messageBodyPart.setFileName(name + ".jpg");
 
         _multipart.addBodyPart(messageBodyPart);
     }
