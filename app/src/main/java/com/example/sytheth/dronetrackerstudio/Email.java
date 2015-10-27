@@ -122,8 +122,13 @@ public class Email extends javax.mail.Authenticator{
         for(String s : dateTime){
             name = name + s;
         }
+        dateTime = name.split(":");
+        String nextString = "";
+        for(String s : dateTime){
+            nextString = nextString + s;
+        }
 
-        messageBodyPart.setFileName(name + ".jpg");
+        messageBodyPart.setFileName(nextString + ".jpg");
 
         _multipart.addBodyPart(messageBodyPart);
     }
