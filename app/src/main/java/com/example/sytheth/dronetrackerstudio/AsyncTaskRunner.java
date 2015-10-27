@@ -12,11 +12,16 @@ import javax.xml.transform.Result;
  * awalts first comment for SE300 on 10/11/2015
  * Test push by stephen for the last time
  *
- *
+ *	@author Sytheth
  *
  *
  */
 public class AsyncTaskRunner extends AsyncTask<Object, Void, Result>{
+    /**
+     *
+     * @param params Contains the Email and File information
+     * @return
+     */
     @Override
     protected Result doInBackground(Object... params) {
         Email email = (Email)params[0];

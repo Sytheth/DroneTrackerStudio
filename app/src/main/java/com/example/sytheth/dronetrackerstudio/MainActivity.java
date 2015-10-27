@@ -54,14 +54,19 @@ import android.widget.Toast;
 
 
 public class MainActivity extends Activity implements LocationListener {
+    /**
+     * @param location GPS location of the user
+     */
     private TextureView mTextureView = null;
     private CameraDevice mCameraDevice = null;
     private CaptureRequest.Builder mPreviewBuilder = null;
     private CameraCaptureSession mPreviewSession = null;
     private Size mPreviewSize = null;
     public Location location;
-
     // Storage location of image file
+    /**
+     * @param file File where the camera image will be saved.
+     */
     final File file = new File(Environment.getExternalStorageDirectory()+"/DCIM/Camera", "IMG_Drone.jpg");
 
 
@@ -113,25 +118,39 @@ public class MainActivity extends Activity implements LocationListener {
     };
 
 
-
+    /**
+     * Sets the location of the user.
+     * @param loc The new location, as a Location object.
+     */
     // Save the location
     @Override
     public void onLocationChanged(Location loc) {
         location = loc;
     }
-
+    /**
+     *
+     * @param provider The name of the location provider associated with this update.
+     * @param status 0 if the provider is out of service, and this is not expected to change in the near future; 1 if the provider is temporarily unavailable but is expected to be available shortly; and 2 if the provider is currently available.
+     * @param extras An optional Bundle which will contain provider specific status variables.
+     */
     // Required (GPS)
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
     }
-
+    /**
+     *
+     * @param provider The name of the location provider associated with this update.
+     */
     // Required (GPS)
     @Override
     public void onProviderEnabled(String provider) {
         // TODO Auto-generated method stub
     }
-
+    /**
+     *
+     * @param provider The name of the location provider associated with this update.
+     */
     // Required (GPS)
     @Override
     public void onProviderDisabled(String provider) {
@@ -205,7 +224,10 @@ public class MainActivity extends Activity implements LocationListener {
             Toast.makeText(MainActivity.this, "Error02!",Toast.LENGTH_SHORT).show();
         }
     };
-
+    /**
+     * Called when the activity is starting. 
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -215,7 +237,9 @@ public class MainActivity extends Activity implements LocationListener {
         mTextureView = (TextureView) findViewById(R.id.textureView1);
         mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
     }
-
+    /**
+     * Method for handling when the app minimizied while running.
+     */
     @Override
     public void onPause(){
         super.onPause();
@@ -225,7 +249,10 @@ public class MainActivity extends Activity implements LocationListener {
             mCameraDevice = null;
         }
     }
-
+    /**
+     * Adds all information to the email besides the image attachment.
+     * @param view User interface.
+     */
     public void sendEmail(View view){
 
         Email email = new Email("gdcerau@gmail.com","NinjaTurtleSwag");
@@ -262,7 +289,10 @@ public class MainActivity extends Activity implements LocationListener {
         Toast.makeText(MainActivity.this, "Email Sent!",Toast.LENGTH_SHORT).show();
     }
 
-
+    /**
+     * Saves the current frame from the camera as a .jpg.
+     * @param view User interface.
+     */
     public void takePhoto(View view){
         // Get the GPS Location
         LocationManager locationMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -399,6 +429,11 @@ public class MainActivity extends Activity implements LocationListener {
         }
 
     }
+    /**
+     * Encodes the GPS location into the image.
+     * @param flNm Filename of the .jpg to be encoded
+     * @param loc Current location of the user.
+     */
     // GEO-Tag the image
     //http://stackoverflow.com/questions/10531544/write-geotag-jpegs-exif-data-in-android
     public void loc2Exif(String flNm, Location loc) {
@@ -420,7 +455,11 @@ public class MainActivity extends Activity implements LocationListener {
 
         } catch (IOException e) {}
     }
-
+    /**
+     * Reformats GPS data into string form.
+     * @param coord Coordinates of the user.
+     * @return
+     */
     // Reformat the GPS Data
     String dec2DMS(double coord) {
         coord = coord > 0 ? coord : -coord;  // -105.9876543 -> 105.9876543
@@ -431,6 +470,10 @@ public class MainActivity extends Activity implements LocationListener {
         sOut = sOut + Integer.toString((int)coord) + "/1000";   // 105/1,59/1,15555/1000
         return sOut;
     }
+    /**
+     * Returns the image file.
+     * @return
+     */
     File getTheFile(){
         return file;
     }
