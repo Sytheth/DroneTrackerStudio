@@ -118,7 +118,7 @@ public class Email extends javax.mail.Authenticator{
 
         Calendar c = Calendar.getInstance();
         String dateTime = c.getTime().toString();
-        //System.out.println(dateTime);
+
         messageBodyPart.setFileName(dateTime + ".jpg");
 
         _multipart.addBodyPart(messageBodyPart);
