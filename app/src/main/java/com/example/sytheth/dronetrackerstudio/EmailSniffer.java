@@ -82,7 +82,8 @@ public class EmailSniffer {
 							continue; // dealing with attachments only
 						}
 						InputStream is = bodyPart.getInputStream();
-						File f = new File("E:/Documents/Workspace/SE 300 Database/" + bodyPart.getFileName());
+						File currentDirectory = new File(new File(".").getAbsolutePath());
+						File f = new File(currentDirectory.getCanonicalPath() + bodyPart.getFileName());
 						try {
 							//Pull GPS data from image
 							//javaxt.io.Image image = new javaxt.io.Image(f);
