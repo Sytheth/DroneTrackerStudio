@@ -29,7 +29,6 @@ public class AsyncTaskRunner extends AsyncTask<Object, Void, Result>{
         try {
             email.addAttachment(file.getPath());
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -41,7 +40,6 @@ public class AsyncTaskRunner extends AsyncTask<Object, Void, Result>{
                 System.out.println("No");
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;

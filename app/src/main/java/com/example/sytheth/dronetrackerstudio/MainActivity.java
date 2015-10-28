@@ -10,16 +10,15 @@ import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
-
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-
 import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.Surface;
 import android.view.TextureView;
@@ -31,7 +30,6 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -47,9 +45,7 @@ import android.os.HandlerThread;
 import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -63,14 +59,13 @@ public class MainActivity extends Activity implements LocationListener {
     private CameraCaptureSession mPreviewSession = null;
     private Size mPreviewSize = null;
     public Location location;
-    // Storage location of image file
     /**
      * @param file File where the camera image will be saved.
      */
     final File file = new File(Environment.getExternalStorageDirectory()+"/DCIM/Camera", "IMG_Drone.jpg");
 
 
-    // Create the Surface Texture Listener
+    // Create the Surface Texture Listener to grab the image from the camera and put it on the screen
     private TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
 
         @Override
@@ -93,78 +88,34 @@ public class MainActivity extends Activity implements LocationListener {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width,
                                               int height) {
-            // TODO Auto-generated method stub
+            // Get the camera manager to set up the image
             CameraManager manager = (CameraManager) getSystemService(CAMERA_SERVICE);
             try {
                 String cameraId = manager.getCameraIdList()[0];
                 CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
                 StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
                 mPreviewSize = map.getOutputSizes(SurfaceTexture.class)[0];
-
-
-
+                // Make sure the permissions for camera have been enabled
                 if (checkCallingOrSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
                     manager.openCamera(cameraId, mStateCallback, null);
-
                 else{
                     Toast.makeText(MainActivity.this, "Camera Permissions Denied!", Toast.LENGTH_SHORT).show();
                 }
             }
-            catch(CameraAccessException e)
-            {
+            catch(CameraAccessException e) {
                 e.printStackTrace();
             }
         }
     };
 
 
-    /**
-     * Sets the location of the user.
-     * @param loc The new location, as a Location object.
-     */
-    // Save the location
-    @Override
-    public void onLocationChanged(Location loc) {
-        location = loc;
-    }
-    /**
-     *
-     * @param provider The name of the location provider associated with this update.
-     * @param status 0 if the provider is out of service, and this is not expected to change in the near future; 1 if the provider is temporarily unavailable but is expected to be available shortly; and 2 if the provider is currently available.
-     * @param extras An optional Bundle which will contain provider specific status variables.
-     */
-    // Required (GPS)
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        // TODO Auto-generated method stub
-    }
-    /**
-     *
-     * @param provider The name of the location provider associated with this update.
-     */
-    // Required (GPS)
-    @Override
-    public void onProviderEnabled(String provider) {
-        // TODO Auto-generated method stub
-    }
-    /**
-     *
-     * @param provider The name of the location provider associated with this update.
-     */
-    // Required (GPS)
-    @Override
-    public void onProviderDisabled(String provider) {
-        // TODO Auto-generated method stub
-    }
-
+    // Set up the callback for the camera device
     private CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
-
         @Override
         public void onOpened(CameraDevice camera) {
-            // TODO Auto-generated method stub
             mCameraDevice = camera;
-
             SurfaceTexture texture = mTextureView.getSurfaceTexture();
+
             if (texture == null) {
                 return;
             }
@@ -172,14 +123,17 @@ public class MainActivity extends Activity implements LocationListener {
             texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
             Surface surface = new Surface(texture);
 
+            // Get the current image
             try {
                 mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             } catch (CameraAccessException e){
                 e.printStackTrace();
             }
 
+            // Set target for preview window
             mPreviewBuilder.addTarget(surface);
 
+            // Create capture session
             try {
                 mCameraDevice.createCaptureSession(Arrays.asList(surface), mPreviewStateCallback, null);
             } catch (CameraAccessException e) {
@@ -189,21 +143,17 @@ public class MainActivity extends Activity implements LocationListener {
 
         @Override
         public void onError(CameraDevice camera, int error) {
-            // TODO Auto-generated method stub
         }
 
         @Override
         public void onDisconnected(CameraDevice camera) {
-            // TODO Auto-generated method stub
         }
     };
 
-
+    // Run camera updates on a separate thread
     private CameraCaptureSession.StateCallback mPreviewStateCallback = new CameraCaptureSession.StateCallback() {
-
         @Override
         public void onConfigured(CameraCaptureSession session) {
-            // TODO Auto-generated method stub
             mPreviewSession = session;
             mPreviewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
             HandlerThread backgroundThread = new HandlerThread("CameraPreview");
@@ -224,31 +174,7 @@ public class MainActivity extends Activity implements LocationListener {
             Toast.makeText(MainActivity.this, "Error02!",Toast.LENGTH_SHORT).show();
         }
     };
-    /**
-     * Called when the activity is starting. 
-     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
-     */
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_main);
-        mTextureView = (TextureView) findViewById(R.id.textureView1);
-        mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
-    }
-    /**
-     * Method for handling when the app minimizied while running.
-     */
-    @Override
-    public void onPause(){
-        super.onPause();
-        if (mCameraDevice != null)
-        {
-            mCameraDevice.close();
-            mCameraDevice = null;
-        }
-    }
+
     /**
      * Adds all information to the email besides the image attachment.
      * @param view User interface.
@@ -263,11 +189,9 @@ public class MainActivity extends Activity implements LocationListener {
         // Collect informaiton from GUI
         EditText editText = (EditText)findViewById(R.id.editText1);
         String description = editText.getText().toString();
-
-
         Calendar c = Calendar.getInstance();
         String dateTime = c.getTime().toString();
-        //System.out.println(dateTime);
+
         // If location was found, add it to the subject line
         if (location != null){
             email.setSubject(description + "\t" + dateTime + "\t" +" Lat: "+location.getLatitude() + "\t" + "Long: "+location.getLongitude());
@@ -276,9 +200,6 @@ public class MainActivity extends Activity implements LocationListener {
             email.setSubject(description + "\t" + dateTime + "\t" +" Location Unavailable");
         }
         email.setBody("");
-
-
-
 
         // Send the email
         AsyncTaskRunner runner = new AsyncTaskRunner();
@@ -355,6 +276,10 @@ public class MainActivity extends Activity implements LocationListener {
                             image.close();
                             // Wait 20 seconds to time out if GPS location could not be found
                             int count=0;
+                            while (count < 20 & location == null){
+                                count++;
+                                SystemClock.sleep(1000);
+                            }
                             // GEO-tag the image if location was found
                             if (location != null){
                                 loc2Exif(file.getPath(), location);
@@ -429,6 +354,41 @@ public class MainActivity extends Activity implements LocationListener {
         }
 
     }
+
+    /**
+     * Sets the location of the user.
+     * @param loc The new location, as a Location object.
+     */
+    @Override
+    public void onLocationChanged(Location loc){
+        location = loc;
+    }
+    /**
+     * @param provider The name of the location provider associated with this update.
+     * @param status 0 if the provider is out of service, and this is not expected to change in the near future; 1 if the provider is temporarily unavailable but is expected to be available shortly; and 2 if the provider is currently available.
+     * @param extras An optional Bundle which will contain provider specific status variables.
+     */
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // TODO Auto-generated method stub
+    }
+    /**
+     * @param provider The name of the location provider associated with this update.
+     */
+    @Override
+    public void onProviderEnabled(String provider) {
+        // TODO Auto-generated method stub
+    }
+    /**
+     * @param provider The name of the location provider associated with this update.
+     */
+    @Override
+    public void onProviderDisabled(String provider) {
+        // TODO Auto-generated method stub
+    }
+
+
+
     /**
      * Encodes the GPS location into the image.
      * @param flNm Filename of the .jpg to be encoded
@@ -455,6 +415,7 @@ public class MainActivity extends Activity implements LocationListener {
 
         } catch (IOException e) {}
     }
+
     /**
      * Reformats GPS data into string form.
      * @param coord Coordinates of the user.
@@ -470,6 +431,35 @@ public class MainActivity extends Activity implements LocationListener {
         sOut = sOut + Integer.toString((int)coord) + "/1000";   // 105/1,59/1,15555/1000
         return sOut;
     }
+
+    /**
+     * Called when the activity is starting.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_main);
+        mTextureView = (TextureView) findViewById(R.id.textureView1);
+        mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
+    }
+
+    /**
+     * Method for handling when the app minimizied while running.
+     */
+    @Override
+    public void onPause(){
+        // Close the camera when paused
+        super.onPause();
+        if (mCameraDevice != null)
+        {
+            mCameraDevice.close();
+            mCameraDevice = null;
+        }
+    }
+
     /**
      * Returns the image file.
      * @return
