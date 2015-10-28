@@ -97,5 +97,18 @@ In the emulator, run and test the app
 
 E| Running the Database
 
+1) The database should be run in eclipse - the name of the file is EmailSniffer.java
 
+2) The required libraries to run it are:
+	-JavaMail
+	-org.apache.commons.lang3.StringUtils;
+	-javaxt
+
+	These have been included in the submission and must be added to the eclipse build path.
+
+3) The program is run simply with the run button.
+
+4) All images attached to the emails send shall be stored in the folder layer one above where the java document is.
+
+5) The database file shall be in the same layer as the java file and will store all information from a single email in a tab separated row of the file
 
