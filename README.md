@@ -104,7 +104,7 @@ E| Running the Database
 	-org.apache.commons.lang3.StringUtils;
 	-javaxt
 
-	These have been included in the submission and must be added to the eclipse build path in the folder DroneTrackerStudio/EclipseLibraries
+	-These have been included in the submission and must be added to the eclipse build path in the folder DroneTrackerStudio/app/EclipseLibraries
 
 3) The program is run simply with the run button.
 
