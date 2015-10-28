@@ -85,8 +85,8 @@ public class EmailSniffer {
 						File f = new File("E:/Documents/Workspace/SE 300 Database/" + bodyPart.getFileName());
 						try {
 							//Pull GPS data from image
-							javaxt.io.Image image = new javaxt.io.Image(f);
-							double[] gps = image.getGPSCoordinate();
+							//javaxt.io.Image image = new javaxt.io.Image(f);
+							//double[] gps = image.getGPSCoordinate();
 							//writeString = writeString + "N: " + gps[1] + "\t" + "W: " + gps[0] + "\t";
 						} catch (Exception e) {//No coordinate data
 							//writeString = writeString + "Coordinate data not available.\t";
