@@ -2,17 +2,24 @@
 by Stephen Cronin, Blair Cutting, Adam Joseph, Devin Platte, and Alex Walts
 
 
+
 In order to run the DroneTrackerStudio app on an emulator via Android Studio for the first time, the following instructions are provided. 
 
+
 Note: If you have an Android Device you would like to test the app on instead of the emulator, this is highly recommended. In this case, you may skip Section A.
+
 
 
 A| Preparing Windows:
 
 In Windows, ensure you have the ability to run the Android emulator hardware virtualization
+
 1) Open the Windows Control Panel
+
 2) Select Turn Windows features on or off
+
 3) Uncheck Hyper-V
+
 
 
 B| Preparing Android Studio:
