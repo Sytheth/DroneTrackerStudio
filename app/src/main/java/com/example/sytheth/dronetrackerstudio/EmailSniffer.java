@@ -60,7 +60,6 @@ public class EmailSniffer {
 						sender = true;
 					}
 				}
-
 				if (sender) {//Sent from a source we care about
 					//Prepare database write
 					FileWriter fileWritter = new FileWriter("Database.txt", true);
