@@ -104,7 +104,7 @@ E| Running the Database
 	-org.apache.commons.lang3.StringUtils;
 	-javaxt
 
-	-These have been included as a separate file in the submission.
+	-These have been included as a EclipseRequiredLibraries.zip file in the main directory of the submission.
 
 3) The program is run simply with the run button.
 
