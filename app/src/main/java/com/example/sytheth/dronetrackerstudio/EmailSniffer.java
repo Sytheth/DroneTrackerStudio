@@ -1,3 +1,4 @@
+/*
 package com.example.sytheth.dronetrackerstudio;
 
 import java.util.*;
@@ -15,21 +16,27 @@ import java.util.*;
 		import java.io.File;
 
 
+*/
 /**
  *
  * @author Stephen Cronin
-*/
+*//*
+
 
 public class EmailSniffer {
-	/*
+	*/
+/*
 	 * @param gps GPS coordinates to be pulled from the .jpg.
-	 */
+	 *//*
+
 	static double[] gps;
 
-	/**
+	*/
+/**
 	 * Receives all unread messages, filters them, and parses and stores the relevant data.
 	 *
-	 */
+	 *//*
+
 	public static void main(String[] args) {
 		Properties props = new Properties();
 		props.setProperty("mail.store.protocol", "imaps");
@@ -120,3 +127,4 @@ public class EmailSniffer {
 	}
 }
 
+*/

@@ -1,12 +1,15 @@
 package com.example.sytheth.dronetrackerstudio;
 
 import android.Manifest;
+import android.animation.AnimatorInflater;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
@@ -16,6 +19,7 @@ import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
@@ -43,10 +47,14 @@ import java.util.List;
 
 import android.os.HandlerThread;
 import android.os.Handler;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import javax.xml.transform.Result;
 
 
 public class MainActivity extends Activity implements LocationListener {
@@ -215,8 +223,27 @@ public class MainActivity extends Activity implements LocationListener {
      * @param view User interface.
      */
     public void takePhoto(View view){
+        ImageView cameraBtn = (ImageView)findViewById(R.id.captureButton);
+
+        cameraBtn.setBackgroundResource(R.drawable.camerabtnanim);
+        AnimationDrawable cameraAnim = (AnimationDrawable)cameraBtn.getBackground();
+        cameraAnim.start();
+
+
         // Get the GPS Location
         LocationManager locationMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (locationMan.getProvider("Test") == null) {
+            locationMan.addTestProvider("Test", false, false, false, false, false, false, false, 0, 1);
+        }
+        locationMan.setTestProviderEnabled("Test", true);
+        location = new Location("Test");
+        location.setLatitude(0);
+        location.setLongitude(0);
+        location.setAltitude(0);
+        location.setTime(System.currentTimeMillis());
+        location.setAccuracy(0);
+        location.setElapsedRealtimeNanos(1);
+
         locationMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
@@ -276,15 +303,22 @@ public class MainActivity extends Activity implements LocationListener {
                             image.close();
                             // Wait 20 seconds to time out if GPS location could not be found
                             int count=0;
-                            while (count < 20 & location == null){
+
+
+                            while (count < 200 & location.getProvider().equals("Test")){
                                 count++;
-                                SystemClock.sleep(1000);
+
+                                SystemClock.sleep(100);
                             }
                             // GEO-tag the image if location was found
-                            if (location != null){
+                            if (!location.getProvider().equals("Test")){
+
                                 loc2Exif(file.getPath(), location);
                             }
                             else{
+                                LocationManager locationMan2 = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                                locationMan2.setTestProviderLocation("Test", location);
+                                onLocationChanged(location);
                                 Toast.makeText(MainActivity.this, "Failed to find location!", Toast.LENGTH_SHORT).show();
                             }
                             // Allow the picture to be sent
@@ -309,7 +343,6 @@ public class MainActivity extends Activity implements LocationListener {
                         }
                     }
                 }
-
             };
 
             // Run the camera capture on a separate thread
@@ -361,6 +394,13 @@ public class MainActivity extends Activity implements LocationListener {
      */
     @Override
     public void onLocationChanged(Location loc){
+        MainActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                ImageView cameraBtn = (ImageView) findViewById(R.id.captureButton);
+                cameraBtn.setBackgroundResource(R.drawable.capturebutton);
+            }
+        });
+
         location = loc;
     }
     /**
@@ -460,11 +500,8 @@ public class MainActivity extends Activity implements LocationListener {
         }
     }
 
-    /**
-     * Returns the image file.
-     * @return
-     */
-    File getTheFile(){
-        return file;
-    }
+
+
+
 }
+

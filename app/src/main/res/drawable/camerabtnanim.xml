@@ -1,0 +1,12 @@
+
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+        <item android:drawable="@drawable/captureprogress1" android:duration="50" />
+        <item android:drawable="@drawable/captureprogress2" android:duration="50" />
+        <item android:drawable="@drawable/captureprogress3" android:duration="50" />
+        <item android:drawable="@drawable/captureprogress4" android:duration="50" />
+        <item android:drawable="@drawable/captureprogress5" android:duration="50" />
+        <item android:drawable="@drawable/captureprogress6" android:duration="50" />
+        <item android:drawable="@drawable/captureprogress7" android:duration="50" />
+        <item android:drawable="@drawable/captureprogress8" android:duration="50" />
+    </animation-list>
