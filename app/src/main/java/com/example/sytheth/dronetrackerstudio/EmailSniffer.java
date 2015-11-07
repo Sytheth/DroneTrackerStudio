@@ -9,7 +9,7 @@ import java.util.*;
 		import javax.mail.Flags.Flag;
 		import javax.mail.search.FlagTerm;
 
-		import org.apache.commons.lang3.StringUtils;
+		//import org.apache.commons.lang3.StringUtils;
 		import java.io.InputStream;
 		import java.io.FileOutputStream;
 		import java.io.BufferedWriter;
@@ -60,7 +60,6 @@ public class EmailSniffer {
 						sender = true;
 					}
 				}
-
 				if (sender) {//Sent from a source we care about
 					//Prepare database write
 					FileWriter fileWritter = new FileWriter("Database.txt", true);
