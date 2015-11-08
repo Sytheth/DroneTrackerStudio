@@ -201,7 +201,7 @@ public class MainActivity extends Activity implements LocationListener {
         String dateTime = c.getTime().toString();
 
         // If location was found, add it to the subject line
-        if (location != null){
+        if (!location.getProvider().contentEquals("Test")){
             email.setSubject(description + "\t" + dateTime + "\t" +" Lat: "+location.getLatitude() + "\t" + "Long: "+location.getLongitude());
         }
         else{
