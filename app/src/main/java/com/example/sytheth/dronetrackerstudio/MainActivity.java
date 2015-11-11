@@ -202,10 +202,10 @@ public class MainActivity extends Activity implements LocationListener {
 
         // If location was found, add it to the subject line
         if (!location.getProvider().contentEquals("Test")){
-            email.setSubject(description + "\t" + dateTime + "\t" +" Lat: "+location.getLatitude() + "\t" + "Long: "+location.getLongitude());
+            email.setSubject(description + "|" + dateTime + "|" +"Lat: "+location.getLatitude() + "|" + "Long: "+location.getLongitude());
         }
         else{
-            email.setSubject(description + "\t" + dateTime + "\t" +" Location Unavailable");
+            email.setSubject(description + "|" + dateTime + "|" +" Location Unavailable");
         }
         email.setBody("");
 
@@ -259,7 +259,7 @@ public class MainActivity extends Activity implements LocationListener {
             // Set up camera type
             if (characteristics != null) {
                 jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
-            }
+        }
 
             // This does NOT set the image size, but it is a guess if all else fails
             int width = 480;
@@ -278,7 +278,8 @@ public class MainActivity extends Activity implements LocationListener {
             outputSurfaces.add(new Surface(mTextureView.getSurfaceTexture()));
             final CaptureRequest.Builder captureBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(reader.getSurface());
-            captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+            captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_SCENE_MODE_STEADYPHOTO);
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
 
             // Set up a image available listener
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
