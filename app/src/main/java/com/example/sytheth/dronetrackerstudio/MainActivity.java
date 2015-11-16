@@ -371,9 +371,6 @@ public class MainActivity extends Activity implements LocationListener {
 
             };
 
-            // Assuming somewhere in here is where the take picture button code will go
-            // Using some kind of setText() method?
-
             // start the capture session
             mCameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
 
@@ -408,7 +405,7 @@ public class MainActivity extends Activity implements LocationListener {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
                 ImageView cameraBtn = (ImageView) findViewById(R.id.captureButton);
-                cameraBtn.setBackgroundResource(R.drawable.capturebutton);
+                cameraBtn.setBackgroundResource(R.drawable.retake);
             }
         });
 
