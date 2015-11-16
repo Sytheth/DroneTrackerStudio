@@ -16,7 +16,7 @@
 
 
     <application
-        android:largeHeap="true"
+        --> possible location for crash fix
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"

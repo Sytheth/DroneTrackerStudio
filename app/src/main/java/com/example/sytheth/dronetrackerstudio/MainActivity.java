@@ -232,7 +232,6 @@ public class MainActivity extends Activity implements LocationListener {
      */
     public void takePhoto(View view){
         ImageView cameraBtn = (ImageView)findViewById(R.id.captureButton);
-
         cameraBtn.setBackgroundResource(R.drawable.camerabtnanim);
         AnimationDrawable cameraAnim = (AnimationDrawable)cameraBtn.getBackground();
         cameraAnim.start();
@@ -371,6 +370,9 @@ public class MainActivity extends Activity implements LocationListener {
                 }
 
             };
+
+            // Assuming somewhere in here is where the take picture button code will go
+            // Using some kind of setText() method?
 
             // start the capture session
             mCameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
@@ -541,7 +543,5 @@ public class MainActivity extends Activity implements LocationListener {
         }
         mTextureView.setTransform(matrix);
     }
-
-
 }
 
