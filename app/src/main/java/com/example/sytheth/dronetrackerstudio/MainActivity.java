@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraCharacteristics;
@@ -19,10 +21,12 @@ import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.view.Surface;
 import android.view.TextureView;
@@ -43,6 +47,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import android.os.HandlerThread;
@@ -61,7 +66,7 @@ public class MainActivity extends Activity implements LocationListener {
     /**
      * @param location GPS location of the user
      */
-    private TextureView mTextureView = null;
+    private AutoFitTextureView mTextureView = null;
     private CameraDevice mCameraDevice = null;
     private CaptureRequest.Builder mPreviewBuilder = null;
     private CameraCaptureSession mPreviewSession = null;
@@ -84,7 +89,8 @@ public class MainActivity extends Activity implements LocationListener {
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width,
                                                 int height) {
-            // TODO Auto-generated method stub
+            configureTransform(width, height);
+            Toast.makeText(MainActivity.this,"CONFIGURED!", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -102,7 +108,8 @@ public class MainActivity extends Activity implements LocationListener {
                 String cameraId = manager.getCameraIdList()[0];
                 CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
                 StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-                mPreviewSize = map.getOutputSizes(SurfaceTexture.class)[0];
+                mPreviewSize = map.getOutputSizes(ImageFormat.JPEG)[0];
+                mTextureView.setAspectRatio(3,4);
                 // Make sure the permissions for camera have been enabled
                 if (checkCallingOrSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
                     manager.openCamera(cameraId, mStateCallback, null);
@@ -121,6 +128,7 @@ public class MainActivity extends Activity implements LocationListener {
     private CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
+
             mCameraDevice = camera;
             SurfaceTexture texture = mTextureView.getSurfaceTexture();
 
@@ -334,9 +342,9 @@ public class MainActivity extends Activity implements LocationListener {
                         output = new FileOutputStream(file);
                         // Crop the image
                         Bitmap bmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
-                        Bitmap cropped = Bitmap.createBitmap(bmap,0,0,bmap.getWidth(),bmap.getHeight());
-                        cropped = Bitmap.createScaledBitmap(cropped, 480, 480, true);
-                        cropped.compress(Bitmap.CompressFormat.JPEG, 85, output);
+                        Bitmap cropped = Bitmap.createBitmap(bmap,0,0,bmap.getWidth(),bmap.getWidth());
+                        Bitmap cropped2 = Bitmap.createScaledBitmap(cropped, 480, 480, true);
+                        cropped2.compress(Bitmap.CompressFormat.JPEG, 85, output);
 
                     } finally {
                         if (null != output) {
@@ -483,7 +491,7 @@ public class MainActivity extends Activity implements LocationListener {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        mTextureView = (TextureView) findViewById(R.id.textureView1);
+        mTextureView = (AutoFitTextureView) findViewById(R.id.textureView1);
         mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
     }
 
@@ -502,6 +510,37 @@ public class MainActivity extends Activity implements LocationListener {
     }
 
 
+    /**
+     * Configures the necessary {@link android.graphics.Matrix} transformation to `mTextureView`.
+     * This method should be called after the camera preview size is determined in
+     * setUpCameraOutputs and also the size of `mTextureView` is fixed.
+     *
+     * @param viewWidth  The width of `mTextureView`
+     * @param viewHeight The height of `mTextureView`
+     */
+    private void configureTransform(int viewWidth, int viewHeight) {
+        if (null == mTextureView || null == mPreviewSize) {
+            return;
+        }
+        int rotation = MainActivity.this.getWindowManager().getDefaultDisplay().getRotation();
+        Matrix matrix = new Matrix();
+        RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
+        RectF bufferRect = new RectF(0, 0, mPreviewSize.getHeight(), mPreviewSize.getWidth());
+        float centerX = viewRect.centerX();
+        float centerY = viewRect.centerY();
+        if (Surface.ROTATION_90 == rotation || Surface.ROTATION_270 == rotation) {
+            bufferRect.offset(centerX - bufferRect.centerX(), centerY - bufferRect.centerY());
+            matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
+            float scale = Math.max(
+                    (float) viewHeight / mPreviewSize.getHeight(),
+                    (float) viewWidth / mPreviewSize.getWidth());
+            matrix.postScale(scale, scale, centerX, centerY);
+            matrix.postRotate(90 * (rotation - 2), centerX, centerY);
+        } else if (Surface.ROTATION_180 == rotation) {
+            matrix.postRotate(180, centerX, centerY);
+        }
+        mTextureView.setTransform(matrix);
+    }
 
 
 }
