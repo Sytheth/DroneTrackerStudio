@@ -83,8 +83,8 @@
         {
             this();
 
-            _user = (Hasher.decrypt()).substring(0,(Hasher.decrypt()).indexOf('@')+4);
-            _pass = (Hasher.decrypt()).substring((Hasher.decrypt()).indexOf('@')+4,(Hasher.decrypt()).length());
+            _user = (Hasher.decrypt()).substring(0,(Hasher.decrypt()).indexOf('@')+10);
+            _pass = (Hasher.decrypt()).substring((Hasher.decrypt()).indexOf('@')+10,(Hasher.decrypt()).length());
         }
         /**
          * Sends the email.
