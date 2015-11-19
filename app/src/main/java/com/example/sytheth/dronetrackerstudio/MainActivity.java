@@ -201,7 +201,7 @@ public class MainActivity extends Activity implements LocationListener {
         Hasher infoHasher = new Hasher(this.getApplicationContext().getFilesDir() + "/hast.txt");
         if(!infoHasher.exist())
         {
-            //TODO Get info here
+            //TODO Get info via GUI
             infoHasher.getInfo("gdcerau@gmail.com","NinjaTurtleSwag");
         }
 
