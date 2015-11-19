@@ -44,6 +44,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -59,6 +61,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import javax.crypto.NoSuchPaddingException;
 import javax.xml.transform.Result;
 
 
@@ -72,6 +75,7 @@ public class MainActivity extends Activity implements LocationListener {
     private CameraCaptureSession mPreviewSession = null;
     private Size mPreviewSize = null;
     public Location location;
+
     /**
      * @param file File where the camera image will be saved.
      */
@@ -83,7 +87,6 @@ public class MainActivity extends Activity implements LocationListener {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-            // TODO Auto-generated method stub
         }
 
         @Override
@@ -95,7 +98,6 @@ public class MainActivity extends Activity implements LocationListener {
 
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-            // TODO Auto-generated method stub
             return false;
         }
 
@@ -186,7 +188,6 @@ public class MainActivity extends Activity implements LocationListener {
 
         @Override
         public void onConfigureFailed(CameraCaptureSession session) {
-            // TODO Auto-generated method stub
             Toast.makeText(MainActivity.this, "Error02!",Toast.LENGTH_SHORT).show();
         }
     };
@@ -195,9 +196,16 @@ public class MainActivity extends Activity implements LocationListener {
      * Adds all information to the email besides the image attachment.
      * @param view User interface.
      */
-    public void sendEmail(View view){
+    public void sendEmail(View view) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException
+    {
+        Hasher infoHasher = new Hasher();
+        if(!infoHasher.exist())
+        {
+            //TODO Get info here
+            infoHasher.getInfo("gdcerau@gmail.com","NinjaTurtleSwag");
+        }
 
-        Email email = new Email("gdcerau@gmail.com","NinjaTurtleSwag");
+        Email email = new Email(infoHasher.getStream());
         String[] toArr = {"croninstephen347@gmail.com"};
         email.setTo(toArr);
         email.setFrom("DroneyTracker@Droney.com");
@@ -418,21 +426,18 @@ public class MainActivity extends Activity implements LocationListener {
      */
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        // TODO Auto-generated method stub
     }
     /**
      * @param provider The name of the location provider associated with this update.
      */
     @Override
     public void onProviderEnabled(String provider) {
-        // TODO Auto-generated method stub
     }
     /**
      * @param provider The name of the location provider associated with this update.
      */
     @Override
     public void onProviderDisabled(String provider) {
-        // TODO Auto-generated method stub
     }
 
 

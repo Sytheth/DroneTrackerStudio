@@ -1,5 +1,8 @@
     package com.example.sytheth.dronetrackerstudio;
 
+    import java.io.IOException;
+    import java.security.InvalidKeyException;
+    import java.security.NoSuchAlgorithmException;
     import java.util.Calendar;
     import java.util.Date;
     import java.util.Properties;
@@ -8,6 +11,8 @@
     import javax.activation.DataSource;
     import javax.activation.FileDataSource;
     import javax.activation.MailcapCommandMap;
+    import javax.crypto.CipherInputStream;
+    import javax.crypto.NoSuchPaddingException;
     import javax.mail.BodyPart;
     import javax.mail.Multipart;
     import javax.mail.PasswordAuthentication;
@@ -72,14 +77,14 @@
         }
         /**
          * Initialization of username and password.
-         * @param user The username of the email account
-         * @param pass The password of the email account
+         * TODO Sorry Stephen I had to delete this cause errors
          */
-        public Email(String user, String pass) {
+        public Email(CipherInputStream encryptedStream) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IOException
+        {
             this();
 
-            _user = user;
-            _pass = pass;
+            _user = (Hasher.decrypt()).substring(0,(Hasher.decrypt()).indexOf('@')+1);
+            _pass = (Hasher.decrypt()).substring((Hasher.decrypt()).indexOf('@')+1,(Hasher.decrypt()).length());
         }
         /**
          * Sends the email.
