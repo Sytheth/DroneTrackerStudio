@@ -198,7 +198,7 @@ public class MainActivity extends Activity implements LocationListener {
      */
     public void sendEmail(View view) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException
     {
-        Hasher infoHasher = new Hasher();
+        Hasher infoHasher = new Hasher(this.getApplicationContext().getFilesDir() + "/hast.txt");
         if(!infoHasher.exist())
         {
             //TODO Get info here

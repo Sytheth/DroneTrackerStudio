@@ -25,14 +25,13 @@ public class Hasher
 {
     protected static File outfile;
     protected static SecretKey skey;
-    protected String output;
     protected byte[] decodedKey;
     protected FileInputStream encfis;
     protected static CipherInputStream cis;
 
-    protected Hasher()
+    protected Hasher(String path)
     {
-        outfile = new File(Environment.getRootDirectory()+"hash.txt");
+        outfile = new File(path);
         decodedKey = Base64.decode("xhksO0ZGMNmH57EI4T0G/w==", Base64.DEFAULT);
         skey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
 
