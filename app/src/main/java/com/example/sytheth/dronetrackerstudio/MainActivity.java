@@ -75,6 +75,8 @@ public class MainActivity extends Activity implements LocationListener {
     private CameraCaptureSession mPreviewSession = null;
     private Size mPreviewSize = null;
     public Location location;
+    public boolean photoTaken = false;
+    public boolean photoInProgress = false;
 
     /**
      * @param file File where the camera image will be saved.
@@ -199,6 +201,7 @@ public class MainActivity extends Activity implements LocationListener {
     public void sendEmail(View view) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException
     {
         Hasher infoHasher = new Hasher(this.getApplicationContext().getFilesDir() + "/hast.txt");
+
         if(!infoHasher.exist())
         {
             //TODO Get info via GUI
@@ -238,170 +241,180 @@ public class MainActivity extends Activity implements LocationListener {
      * Saves the current frame from the camera as a .jpg.
      * @param view User interface.
      */
-    public void takePhoto(View view){
-        ImageView cameraBtn = (ImageView)findViewById(R.id.captureButton);
-        cameraBtn.setBackgroundResource(R.drawable.camerabtnanim);
-        AnimationDrawable cameraAnim = (AnimationDrawable)cameraBtn.getBackground();
-        cameraAnim.start();
+    public void takePhoto(View view) {
+        if (!photoInProgress && !photoTaken) {
+            ImageView cameraBtn = (ImageView) findViewById(R.id.captureButton);
+            cameraBtn.setBackgroundResource(R.drawable.camerabtnanim);
+            AnimationDrawable cameraAnim = (AnimationDrawable) cameraBtn.getBackground();
+            cameraAnim.start();
+            photoInProgress = true;
 
+            // Get the GPS Location
+            LocationManager locationMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (locationMan.getProvider("Test") == null) {
+                locationMan.addTestProvider("Test", false, false, false, false, false, false, false, 0, 1);
+            }
+            locationMan.setTestProviderEnabled("Test", true);
+            location = new Location("Test");
+            location.setLatitude(0);
+            location.setLongitude(0);
+            location.setAltitude(0);
+            location.setTime(System.currentTimeMillis());
+            location.setAccuracy(0);
+            location.setElapsedRealtimeNanos(1);
 
-        // Get the GPS Location
-        LocationManager locationMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (locationMan.getProvider("Test") == null) {
-            locationMan.addTestProvider("Test", false, false, false, false, false, false, false, 0, 1);
-        }
-        locationMan.setTestProviderEnabled("Test", true);
-        location = new Location("Test");
-        location.setLatitude(0);
-        location.setLongitude(0);
-        location.setAltitude(0);
-        location.setTime(System.currentTimeMillis());
-        location.setAccuracy(0);
-        location.setElapsedRealtimeNanos(1);
+            locationMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
-        locationMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-
-        // Check to see if camera is open
-        if(null == mCameraDevice) {
-            return;
-        }
-        // Capture the picture
-        try {
-            CameraCharacteristics characteristics = manager.getCameraCharacteristics(mCameraDevice.getId());
-            Size[] jpegSizes = null;
-
-            // Set up camera type
-            if (characteristics != null) {
-                jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
-        }
-
-            // This does NOT set the image size, but it is a guess if all else fails
-            int width = 480;
-            int height = 480;
-
-            // Choose the best quality image available from the camera
-            if (jpegSizes != null && 0 < jpegSizes.length) {
-                width = jpegSizes[0].getWidth();
-                height = jpegSizes[0].getHeight();
+            // Check to see if camera is open
+            if (null == mCameraDevice) {
+                return;
             }
 
-            // Read the image from the camera
-            ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
-            List<Surface> outputSurfaces = new ArrayList<Surface>(2);
-            outputSurfaces.add(reader.getSurface());
-            outputSurfaces.add(new Surface(mTextureView.getSurfaceTexture()));
-            final CaptureRequest.Builder captureBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-            captureBuilder.addTarget(reader.getSurface());
-            captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_SCENE_MODE_STEADYPHOTO);
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
 
-            // Set up a image available listener
-            ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
+            // Capture the picture
+            try {
+                CameraCharacteristics characteristics = manager.getCameraCharacteristics(mCameraDevice.getId());
+                Size[] jpegSizes = null;
 
-                @Override
-                public void onImageAvailable(ImageReader reader) {
-                    Image image = null;
-                    // Capture the image
-                    try {
-                        image = reader.acquireLatestImage();
-                        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                        byte[] bytes = new byte[buffer.capacity()];
-                        buffer.get(bytes);
-                        // Save the image using the save method
-                        save(bytes);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (image != null) {
-                            image.close();
-                            // Wait 20 seconds to time out if GPS location could not be found
-                            int count=0;
+                // Set up camera type
+                if (characteristics != null) {
+                    jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
+                }
+
+                // This does NOT set the image size, but it is a guess if all else fails
+                int width = 480;
+                int height = 480;
+
+                // Choose the best quality image available from the camera
+                if (jpegSizes != null && 0 < jpegSizes.length) {
+                    width = jpegSizes[0].getWidth();
+                    height = jpegSizes[0].getHeight();
+                }
+
+                // Read the image from the camera
+                ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
+                List<Surface> outputSurfaces = new ArrayList<Surface>(2);
+                outputSurfaces.add(reader.getSurface());
+                outputSurfaces.add(new Surface(mTextureView.getSurfaceTexture()));
+                final CaptureRequest.Builder captureBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+                captureBuilder.addTarget(reader.getSurface());
+                captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_SCENE_MODE_STEADYPHOTO);
+                captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
+
+                // Set up a image available listener
+                ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
+
+                    @Override
+                    public void onImageAvailable(ImageReader reader) {
+                        Image image = null;
+                        // Capture the image
+                        try {
+                            image = reader.acquireLatestImage();
+                            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                            byte[] bytes = new byte[buffer.capacity()];
+                            buffer.get(bytes);
+                            // Save the image using the save method
+                            save(bytes);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (image != null) {
+                                image.close();
+                                // Wait 20 seconds to time out if GPS location could not be found
+                                int count = 0;
 
 
-                            while (count < 200 & location.getProvider().equals("Test")){
-                                count++;
+                                while (count < 20 & location.getProvider().equals("Test")) {
+                                    count++;
 
-                                SystemClock.sleep(100);
+                                    SystemClock.sleep(100);
+                                }
+                                // GEO-tag the image if location was found
+                                if (!location.getProvider().equals("Test")) {
+
+                                    loc2Exif(file.getPath(), location);
+                                } else {
+                                    LocationManager locationMan2 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                                    locationMan2.setTestProviderLocation("Test", location);
+                                    onLocationChanged(location);
+                                    Toast.makeText(MainActivity.this, "Failed to find location!", Toast.LENGTH_SHORT).show();
+                                }
+                                // Allow the picture to be sent
+                                photoInProgress = false;
+                                photoTaken= true;
+                                mCameraDevice.close();
                             }
-                            // GEO-tag the image if location was found
-                            if (!location.getProvider().equals("Test")){
-
-                                loc2Exif(file.getPath(), location);
-                            }
-                            else{
-                                LocationManager locationMan2 = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-                                locationMan2.setTestProviderLocation("Test", location);
-                                onLocationChanged(location);
-                                Toast.makeText(MainActivity.this, "Failed to find location!", Toast.LENGTH_SHORT).show();
-                            }
-                            // Allow the picture to be sent
                         }
                     }
-                }
 
-                // Save the image
-                private void save(byte[] bytes) throws IOException {
-                    OutputStream output = null;
-                    try {
-                        output = new FileOutputStream(file);
-                        // Crop the image
-                        Bitmap bmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
-                        Bitmap cropped = Bitmap.createBitmap(bmap,0,0,bmap.getWidth(),bmap.getWidth());
-                        Bitmap cropped2 = Bitmap.createScaledBitmap(cropped, 480, 480, true);
-                        cropped2.compress(Bitmap.CompressFormat.JPEG, 85, output);
+                    // Save the image
+                    private void save(byte[] bytes) throws IOException {
+                        OutputStream output = null;
+                        try {
+                            output = new FileOutputStream(file);
+                            // Crop the image
+                            Bitmap bmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
+                            Bitmap cropped = Bitmap.createBitmap(bmap, 0, 0, bmap.getWidth(), bmap.getWidth());
+                            Bitmap cropped2 = Bitmap.createScaledBitmap(cropped, 480, 480, true);
+                            cropped2.compress(Bitmap.CompressFormat.JPEG, 85, output);
 
-                    } finally {
-                        if (null != output) {
-                            output.close();
+                        } finally {
+                            if (null != output) {
+                                output.close();
+                            }
                         }
                     }
-                }
-            };
+                };
 
-            // Run the camera capture on a separate thread
-            HandlerThread thread = new HandlerThread("CameraPicture");
-            thread.start();
-            final Handler backgroudHandler = new Handler(thread.getLooper());
-            reader.setOnImageAvailableListener(readerListener, backgroudHandler);
+                // Run the camera capture on a separate thread
+                HandlerThread thread = new HandlerThread("CameraPicture");
+                thread.start();
+                final Handler backgroudHandler = new Handler(thread.getLooper());
+                reader.setOnImageAvailableListener(readerListener, backgroudHandler);
 
-            // Create a capture listener for when the image has been saved
-            final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
+                // Create a capture listener for when the image has been saved
+                final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
 
-                @Override
-                public void onCaptureCompleted(CameraCaptureSession session,
-                                               CaptureRequest request, TotalCaptureResult result) {
-                    super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(MainActivity.this, "Saved:"+file, Toast.LENGTH_SHORT).show();
-                }
-
-            };
-
-            // start the capture session
-            mCameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
-
-                @Override
-                public void onConfigured(CameraCaptureSession session) {
-
-                    try {
-                        session.capture(captureBuilder.build(), captureListener, backgroudHandler);
-                    } catch (CameraAccessException e) {
-                        e.printStackTrace();
+                    @Override
+                    public void onCaptureCompleted(CameraCaptureSession session,
+                                                   CaptureRequest request, TotalCaptureResult result) {
+                        super.onCaptureCompleted(session, request, result);
+                        Toast.makeText(MainActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
                     }
-                }
 
-                @Override
-                public void onConfigureFailed(CameraCaptureSession session) {
+                };
 
-                }
-            }, backgroudHandler);
+                // start the capture session
+                mCameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
 
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
+                    @Override
+                    public void onConfigured(CameraCaptureSession session) {
+
+                        try {
+                            session.capture(captureBuilder.build(), captureListener, backgroudHandler);
+                        } catch (CameraAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onConfigureFailed(CameraCaptureSession session) {
+
+                    }
+                }, backgroudHandler);
+
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+
+        }else if(photoTaken){
+            // TODO Do the retake stuff here, Alex
+
+            photoTaken = false;
         }
-
     }
 
     /**
@@ -412,8 +425,10 @@ public class MainActivity extends Activity implements LocationListener {
     public void onLocationChanged(Location loc){
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
-                ImageView cameraBtn = (ImageView) findViewById(R.id.captureButton);
-                cameraBtn.setBackgroundResource(R.drawable.retake);
+                if (photoTaken){
+                    ImageView cameraBtn = (ImageView) findViewById(R.id.captureButton);
+                    cameraBtn.setBackgroundResource(R.drawable.retakebutton);
+            }
             }
         });
 
