@@ -3,6 +3,7 @@ package com.example.sytheth.dronetrackerstudio;
 import android.Manifest;
 import android.animation.AnimatorInflater;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Surface;
@@ -65,7 +67,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.xml.transform.Result;
 
 
-public class MainActivity extends Activity implements LocationListener {
+public class MainActivity extends FragmentActivity implements LocationListener {
     /**
      * @param location GPS location of the user
      */
@@ -203,9 +205,13 @@ public class MainActivity extends Activity implements LocationListener {
             Hasher infoHasher = new Hasher(this.getApplicationContext().getFilesDir() + "/hast.txt");
 
             if (!infoHasher.exist()) {
-                //TODO Get info via GUI
-                infoHasher.getInfo("gdcerau@gmail.com", "NinjaTurtleSwag");
-            }
+                //TODO do some error checking on the username and authentication
+                Signin signDiag = new Signin(infoHasher,location,file);
+
+                signDiag.show(getFragmentManager(), "missiles");;
+
+
+
 
             Email email = new Email(infoHasher.getStream());
             String[] toArr = {"croninstephen347@gmail.com"};
@@ -233,6 +239,8 @@ public class MainActivity extends Activity implements LocationListener {
 
             // Reset camera *** to be added later
             Toast.makeText(MainActivity.this, "Email Sent!", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 
@@ -344,7 +352,9 @@ public class MainActivity extends Activity implements LocationListener {
                                 // Allow the picture to be sent
                                 photoInProgress = false;
                                 photoTaken= true;
-                                mCameraDevice.close();
+                                if (mCameraDevice!=null) {
+                                    mCameraDevice.close();
+                                }
                             }
                         }
                     }

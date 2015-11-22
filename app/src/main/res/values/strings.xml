@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">DroneTrackerStudio</string>
-
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="signin">Sign in</string>
+    <string name="cancel">Cancel</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 </resources>
