@@ -198,43 +198,42 @@ public class MainActivity extends Activity implements LocationListener {
      * Adds all information to the email besides the image attachment.
      * @param view User interface.
      */
-    public void sendEmail(View view) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException
-    {
-        Hasher infoHasher = new Hasher(this.getApplicationContext().getFilesDir() + "/hast.txt");
+    public void sendEmail(View view) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException {
+        if (photoTaken) {
+            Hasher infoHasher = new Hasher(this.getApplicationContext().getFilesDir() + "/hast.txt");
 
-        if(!infoHasher.exist())
-        {
-            //TODO Get info via GUI
-            infoHasher.getInfo("gdcerau@gmail.com","NinjaTurtleSwag");
+            if (!infoHasher.exist()) {
+                //TODO Get info via GUI
+                infoHasher.getInfo("gdcerau@gmail.com", "NinjaTurtleSwag");
+            }
+
+            Email email = new Email(infoHasher.getStream());
+            String[] toArr = {"croninstephen347@gmail.com"};
+            email.setTo(toArr);
+            email.setFrom("DroneyTracker@Droney.com");
+
+            // Collect informaiton from GUI
+            EditText editText = (EditText) findViewById(R.id.editText1);
+            String description = editText.getText().toString();
+            Calendar c = Calendar.getInstance();
+            String dateTime = c.getTime().toString();
+
+            // If location was found, add it to the subject line
+            if (!location.getProvider().contentEquals("Test")) {
+                email.setSubject(description + "|" + dateTime + "|" + "Lat: " + location.getLatitude() + "|" + "Long: " + location.getLongitude());
+            } else {
+                email.setSubject(description + "|" + dateTime + "|" + " Location Unavailable");
+            }
+            email.setBody("");
+
+            // Send the email
+            AsyncTaskRunner runner = new AsyncTaskRunner();
+            Object[] obarray = {email, file};
+            runner.execute(obarray);
+
+            // Reset camera *** to be added later
+            Toast.makeText(MainActivity.this, "Email Sent!", Toast.LENGTH_SHORT).show();
         }
-
-        Email email = new Email(infoHasher.getStream());
-        String[] toArr = {"croninstephen347@gmail.com"};
-        email.setTo(toArr);
-        email.setFrom("DroneyTracker@Droney.com");
-
-        // Collect informaiton from GUI
-        EditText editText = (EditText)findViewById(R.id.editText1);
-        String description = editText.getText().toString();
-        Calendar c = Calendar.getInstance();
-        String dateTime = c.getTime().toString();
-
-        // If location was found, add it to the subject line
-        if (!location.getProvider().contentEquals("Test")){
-            email.setSubject(description + "|" + dateTime + "|" +"Lat: "+location.getLatitude() + "|" + "Long: "+location.getLongitude());
-        }
-        else{
-            email.setSubject(description + "|" + dateTime + "|" +" Location Unavailable");
-        }
-        email.setBody("");
-
-        // Send the email
-        AsyncTaskRunner runner = new AsyncTaskRunner();
-        Object[] obarray = {email,file};
-        runner.execute(obarray);
-
-        // Reset camera *** to be added later
-        Toast.makeText(MainActivity.this, "Email Sent!",Toast.LENGTH_SHORT).show();
     }
 
     /**
