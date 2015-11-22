@@ -420,8 +420,15 @@ public class MainActivity extends FragmentActivity implements LocationListener {
             }
 
         }else if(photoTaken){
-            // TODO Do the retake stuff here, Alex
-
+            CameraManager cameraMan = (CameraManager)getSystemService(Context.CAMERA_SERVICE);
+            try {
+                String[] cameras = cameraMan.getCameraIdList();
+                cameraMan.openCamera(cameras[0],mStateCallback,null);
+                ImageView.setBackgroundResource(R.drawable.capturebutton);
+                cameraBtn.setBackgroundResource(R.drawable.capturebutton);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
             photoTaken = false;
         }
     }
