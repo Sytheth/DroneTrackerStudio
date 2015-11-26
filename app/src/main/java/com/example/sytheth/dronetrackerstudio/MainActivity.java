@@ -60,6 +60,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -201,49 +202,49 @@ public class MainActivity extends FragmentActivity implements LocationListener {
      * @param view User interface.
      */
     public void sendEmail(View view) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException {
+        Toast.makeText(MainActivity.this, "Sending...", Toast.LENGTH_SHORT).show();
         if (photoTaken) {
             Hasher infoHasher = new Hasher(this.getApplicationContext().getFilesDir() + "/hast.txt");
 
             if (!infoHasher.exist()) {
                 //TODO do some error checking on the username and authentication
-                Signin signDiag = new Signin(infoHasher,location,file);
+                Signin signDiag = new Signin(infoHasher, location, file);
 
-                signDiag.show(getFragmentManager(), "missiles");;
+                signDiag.show(getFragmentManager(), "missiles");
 
-
-
-
-            Email email = new Email(infoHasher.getStream());
-            String[] toArr = {"croninstephen347@gmail.com"};
-            email.setTo(toArr);
-            email.setFrom("DroneyTracker@Droney.com");
-
-            // Collect informaiton from GUI
-            EditText editText = (EditText) findViewById(R.id.editText1);
-            String description = editText.getText().toString();
-            Calendar c = Calendar.getInstance();
-            String dateTime = c.getTime().toString();
-
-            // If location was found, add it to the subject line
-            if (!location.getProvider().contentEquals("Test")) {
-                email.setSubject(description + "|" + dateTime + "|" + "Lat: " + location.getLatitude() + "|" + "Long: " + location.getLongitude());
             } else {
-                email.setSubject(description + "|" + dateTime + "|" + " Location Unavailable");
+                Email email = new Email(infoHasher.getStream());
+                String[] toArr = {"croninstephen347@gmail.com"};
+                email.setTo(toArr);
+                email.setFrom("DroneyTracker@Droney.com");
+
+                // Collect informaiton from GUI
+                EditText editText = (EditText) findViewById(R.id.editText1);
+                String description = editText.getText().toString();
+                Calendar c = Calendar.getInstance();
+                String dateTime = c.getTime().toString();
+
+                // If location was found, add it to the subject line
+                if (!location.getProvider().contentEquals("Test")) {
+                    email.setSubject(description + "|" + dateTime + "|" + "Lat: " + location.getLatitude() + "|" + "Long: " + location.getLongitude());
+                } else {
+                    email.setSubject(description + "|" + dateTime + "|" + " Location Unavailable");
+                }
+                email.setBody("");
+
+                // Send the email
+                AsyncTaskRunner runner = new AsyncTaskRunner();
+                Object[] obarray = {email, file};
+                runner.execute(obarray);
+
+                // Reset camera *** to be added later
+                Toast.makeText(MainActivity.this, "Email Sent!", Toast.LENGTH_SHORT).show();
             }
-            email.setBody("");
-
-            // Send the email
-            AsyncTaskRunner runner = new AsyncTaskRunner();
-            Object[] obarray = {email, file};
-            runner.execute(obarray);
-
-            // Reset camera *** to be added later
-            Toast.makeText(MainActivity.this, "Email Sent!", Toast.LENGTH_SHORT).show();
-            }
-
         }
     }
-
+    public void dismiss(View view) {
+        view.setVisibility(View.INVISIBLE);
+    }
     /**
      * Saves the current frame from the camera as a .jpg.
      * @param view User interface.
@@ -421,10 +422,10 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
         }else if(photoTaken){
             CameraManager cameraMan = (CameraManager)getSystemService(Context.CAMERA_SERVICE);
+            ImageView cameraBtn = (ImageView) findViewById(R.id.captureButton);
             try {
                 String[] cameras = cameraMan.getCameraIdList();
                 cameraMan.openCamera(cameras[0],mStateCallback,null);
-                ImageView.setBackgroundResource(R.drawable.capturebutton);
                 cameraBtn.setBackgroundResource(R.drawable.capturebutton);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
@@ -528,6 +529,16 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         setContentView(R.layout.activity_main);
         mTextureView = (AutoFitTextureView) findViewById(R.id.textureView1);
         mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
+        Hasher infoHasher = new Hasher(this.getApplicationContext().getFilesDir() + "/hast.txt");
+
+try {
+    if (!infoHasher.exist()) {
+        ImageButton mTutorialView = (ImageButton) findViewById(R.id.tutorial);
+        mTutorialView.setVisibility(View.VISIBLE);
+    }
+}catch (Exception e){
+        e.printStackTrace();
+    }
     }
 
     /**

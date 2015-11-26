@@ -40,12 +40,12 @@ public class Hasher
     protected boolean exist() throws IOException
     {
         if(outfile.exists()) {
-            encfis = new FileInputStream(outfile);
+            //encfis = new FileInputStream(outfile);
             return true;
         }
         else
         {
-            outfile.createNewFile();
+            //outfile.createNewFile();
             return false;
         }
     }

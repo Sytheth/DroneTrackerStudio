@@ -113,7 +113,16 @@
         android:layout_alignEnd="@+id/imageView2" />
 
 
-
+    <ImageButton
+        android:background="@drawable/tutorial"
+        android:id="@+id/tutorial"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:onClick="dismiss"
+        android:text="Tutorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible" />
 
 
 
