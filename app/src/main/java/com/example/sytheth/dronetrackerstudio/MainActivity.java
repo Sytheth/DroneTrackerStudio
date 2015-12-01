@@ -98,7 +98,6 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width,
                                                 int height) {
             configureTransform(width, height);
-            Toast.makeText(MainActivity.this,"CONFIGURED!", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -202,7 +201,6 @@ public class MainActivity extends FragmentActivity implements LocationListener {
      * @param view User interface.
      */
     public void sendEmail(View view) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException {
-        Toast.makeText(MainActivity.this, "Sending...", Toast.LENGTH_SHORT).show();
         if (photoTaken) {
             Hasher infoHasher = new Hasher(this.getApplicationContext().getFilesDir() + "/hast.txt");
 
@@ -392,7 +390,6 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                     public void onCaptureCompleted(CameraCaptureSession session,
                                                    CaptureRequest request, TotalCaptureResult result) {
                         super.onCaptureCompleted(session, request, result);
-                        Toast.makeText(MainActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
                     }
 
                 };
