@@ -95,16 +95,14 @@ In the emulator, run and test the app
 4) Press the Email to Police button to send the email. This email will contain the picture you caputured, description you entered, along with an automatically gathered GPS location
 
 
-E| Running the Database
+E| Querying the email server.
 
-1) The database should be run in eclipse - the name of the file is EmailSniffer.java
+1) The querying code should be run in eclipse - the name of the file is EmailSniffer.java
 
-2) The required libraries to run it are:
+2) The required libraries to run it are and have been included in the file EclipseRequiredLibraries.zip located in the submission:
 	-JavaMail
 	-org.apache.commons.lang3.StringUtils;
 	-javaxt
-
-	-These have been included as a EclipseRequiredLibraries.zip file in the main directory of the submission.
 
 3) The program is run simply with the run button.
 
@@ -112,3 +110,16 @@ E| Running the Database
 
 5) The database file shall be in the same layer as the java file and will store all information from a single email in a tab separated row of the file
 
+F| Running the database UI:
+
+1) This should be run after the email server has been queried once.
+
+2) The code shall be run in eclipse - the file is UI.java.
+
+3) To run, simply press the run button.
+
+4) To navigate through database entries, use the arrow keys located over the image.
+
+5) To search, enter a date in the combo boxes and press the search button.
+
+6) To requery the email server, press the query button.
