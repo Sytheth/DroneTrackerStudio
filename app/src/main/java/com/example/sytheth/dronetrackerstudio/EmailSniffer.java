@@ -65,7 +65,7 @@ public class EmailSniffer {
 				Message msg = messages[z];
 				Address[] in = msg.getFrom();
 
-				sender = true;
+				Boolean sender = true;
 				if (sender) {//Sent from a source we care about
 
 
